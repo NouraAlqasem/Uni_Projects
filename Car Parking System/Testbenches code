@@ -1,0 +1,31 @@
+module CarParking_SystemBenche 
+//Output 														
+wire [6:0] first_Segment,second_Segment;
+wire RedLED, GreenLED;
+//Input 
+reg [1:0] Password;
+reg LockSignal,ResetSingl,EntranceSensor,ExitSensor;
+CarParking_System at (LockSignal , ResetSingl , EntranceSensor , ExitSensor , Password , GreenLED , RedLED , first_Segment , second_Segment );
+initial begin
+//initialze input
+//lock the gate
+LockSignal = 1  ;  ResetSingl = 0 ; EntranceSensor = 0 ;  ExitSensor = 0  ;  Password = 0 ;  
+
+// wait 30
+#30
+LockSignal = 0  ;  ResetSingl = 0 ; EntranceSensor = 1 ;  ExitSensor = 0  ;  Password = 2 ;
+
+// wait 30 
+#30
+LockSignal = 0  ;  ResetSingl = 0 ; EntranceSensor = 1 ;  ExitSensor = 0  ;  Password = 3 ;  
+
+// wait 20 
+#20
+LockSignal = 0  ;  ResetSingl = 0 ; EntranceSensor = 0 ;  ExitSensor = 1  ;  Password = 0 ;
+
+// wait 30
+#30
+LockSignal = 0  ;  ResetSingl = 1 ; EntranceSensor = 0 ;  ExitSensor = 0  ;  Password = 0 ; 
+
+end
+endmodule
