@@ -1,0 +1,118 @@
+ 
+drop table Donor cascade constraints;
+
+create table Donor(
+Donor_ID varchar2(10) Primary key,
+name varchar2(30),
+DOB date ,
+sex char(6) Check (sex IN ('female','male')),
+phone_number varchar2(10)) ;
+
+drop table Blood_unit cascade constraint;
+
+create table Blood_unit(
+blood_type char (3) Not Null,
+blood_code varchar2(7) Primary key ,
+Donor_ID varchar2(10) UNIQUE,
+DoD date,
+constraint DID_fg foreign key (Donor_ID) references Donor (Donor_ID));
+
+drop table Hospital_Department cascade constraints;
+
+create table Hospital_Department(
+Department_ID varchar2(7) PRIMARY KEY,
+Name varchar2(50),
+receives_date DATE) ;
+
+drop table patient cascade constraints;
+
+create table patient (
+patient_ID varchar2(10) PRIMARY KEY,
+Department_ID varchar2(7) ,
+sex char (6) Check (sex IN ('female','male')),
+DoB DATE,
+name varchar2 (30),
+blood_type char (3) Not Null,
+constraint Dep_fk foreign key (Department_ID) references Hospital_Department (Department_ID));
+
+drop table blood_bank cascade constraints;
+create table blood_bank(
+bloodbank_name char(10) PRIMARY KEY,
+blood_code varchar2(7) NOT NULL UNIQUE ,
+blood_type char(3) NOT NULL,
+address varchar2(20));
+
+
+
+drop table request cascade constraints;
+
+create table request(
+department_ID varchar2(7)  ,
+blood_code varchar2(7)  ,
+bloodbank_name char(10)  ,
+unit_no varchar2(5) ,
+constraint req_PK PRIMARY KEY (department_ID ,blood_code ,bloodbank_name ),
+constraint depID_FK FOREIGN KEY (Department_ID) references Hospital_Department(Department_ID));
+
+
+INSERT into Donor (Donor_ID ,name ,DOB ,sex ,phone_number)
+values ('1163875648','Asma','22-9-2000','female','0557436779');
+INSERT into Donor (Donor_ID ,name ,DOB ,sex ,phone_number)
+values ('1026478347','Ahmad','05-12-1995','male','0505723625');
+INSERT into Donor (Donor_ID ,name ,DOB ,sex ,phone_number)
+values ('1122334455','Nor','11-10-1990','female','0557436779');
+
+
+INSERT into Blood_unit(blood_type,blood_code,Donor_ID,DoD)
+values ('O+','E563495','1163875648','01-1-2020');
+INSERT into Blood_unit(blood_type ,blood_code,Donor_ID,DoD)
+values ('B+','E279546','1026478347','01-1-2021');
+INSERT into Blood_unit(blood_type,blood_code,Donor_ID,DoD)
+values ('AB+','E978843','1122334455','01-1-2022');
+
+
+INSERT into Hospital_Department(Department_ID,name,receives_date)
+values ('1234567','Emergency department','08-4-2022');
+INSERT into Hospital_Department(Department_ID,name,receives_date)
+values ('2235567','Department of Obstetrics','16-10-2021');
+INSERT into Hospital_Department(Department_ID,name,receives_date)
+values ('5678972','children department','16-10-2021');
+
+
+INSERT into patient(patient_ID,Department_ID,sex,DoB,name,blood_type)
+values ('1110011111','1234567','female','01-12-2001','sara','A-');
+INSERT into patient(patient_ID,Department_ID,sex,DoB,name,blood_type)
+values ('111009865','2235567','female','22-4-2001','reem','O+');
+INSERT into patient(patient_ID,Department_ID,sex,DoB,name,blood_type)
+values ('123345789','5678972','male','02-6-2018','nasser','AB+');
+
+INSERT into blood_bank(bloodbank_name,blood_code,blood_type,address) 
+values ('wateen1','22356','A+','Riyadh');
+INSERT into blood_bank(bloodbank_name,blood_code,blood_type,address) 
+values ('wateen2','22453','B+','Jeddah');
+INSERT into blood_bank(bloodbank_name,blood_code,blood_type,address) 
+values ('wateen3','22513','O+','Dammam');
+
+SELECT Donor_ID 
+FROM Blood_unit
+WHERE blood_type = 'O+' ;
+
+SELECT *
+FROM Donor
+WHERE sex= 'female';
+
+SELECT bloodbank_name
+FROM blood_bank
+WHERE address='Dammam';
+
+SELECT blood_type ,count(*)
+FROM Blood_unit
+group by blood_type 
+having count(*)>=1;
+
+SELECT Department_ID,count(patient_ID)
+FROM patient
+group by Department_ID;
+
+select  count (blood_code)
+from blood_bank ;
