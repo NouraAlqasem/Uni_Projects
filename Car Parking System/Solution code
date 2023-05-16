@@ -1,0 +1,63 @@
+module CarParking_System (LockSignal , ResetSingl , EntranceSensor , ExitSensor , Password , GreenLED , RedLED , first_Segment , second_Segment );
+output reg   GreenLED, RedLED; 
+output reg [6:0] first_Segment,second_Segment ;
+input LockSignal , ResetSingl , EntranceSensor , ExitSensor; 
+input [1:0] Password; 
+reg [1:0] Positon ; 
+parameter  Lock = 2'b10 , Reset = 2'b00 , Wait = 2'b01 ; 
+always @(LockSignal)
+begin 
+if(  LockSignal == 1'b1)
+ Positon = Lock ;
+end 
+always @(ResetSingl)
+begin 
+if(  ResetSingl == 1'b1)
+Positon = Reset ;
+end 
+always @(EntranceSensor)
+begin 
+if(  EntranceSensor == 1'b1)
+Positon =   Wait ;
+end      
+always @(ExitSensor)    	
+begin       
+if(  ExitSensor == 1'b1)        
+Positon = Lock ;
+end	
+always @ (Positon , Password ) 
+begin
+case (Positon)
+Reset : begin
+assign GreenLED = 1'b0;
+assign RedLED = 1'b0;
+first_Segment = 7'b1111110;  // O
+second_Segment = 7'b1000111; // F
+end			
+Wait : begin
+assign GreenLED = 1'b0;
+assign RedLED = 1'b1;
+first_Segment = 7'b1001111;  //E
+second_Segment = 7'b0010101; // n
+if(Password==2'b11) //RIGHT_PASS	                begin           #10
+assign GreenLED = 1'b1;
+assign RedLED = 1'b0;
+first_Segment = 7'b1111110; //O
+second_Segment = 7'b1100111; //F  
+end
+ else
+begin //wrong
+assign GreenLED = 1'b0;
+assign RedLED = 1'b1;
+first_Segment = 7'b1001111;	//E
+second_Segment = 7'b0000101; //r
+end 
+end	   
+Lock : begin 
+assign 	GreenLED = 1'b0;
+assign  RedLED = 1'b1;
+first_Segment = 7'b1011011;	 //S
+second_Segment = 7'b1100111; //P
+end
+endcase              end 		
+endmodule
